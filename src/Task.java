@@ -4,6 +4,12 @@ private String title;
 private String description;
 private Status status;
 
+    public Task(int id, String title, String description, Status status) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.status = status;
+    }
     //Getters
     public int getId()
     {
@@ -25,6 +31,10 @@ private Status status;
     }
     public void setStatus(Status status){
         this.status=status;
+    }
+    @Override
+    public String toString() {
+        return "Task [id=" + id + ", title='" + title + "', description='" + description + "', status=" + status + "]";
     }
 }
 
