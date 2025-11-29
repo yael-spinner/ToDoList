@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class TaskRepository {
     private final String FILE_PATH = "task.data";
     private Map<Integer,Task> taskMap;
-    private AtomicInteger nextId;
+    private transient AtomicInteger nextId;
 
     public TaskRepository(){
         taskMap=loadTaskFromFile();
@@ -33,10 +33,10 @@ public class TaskRepository {
     }
     public Task add(String title ,String description){
         int id =nextId.getAndIncrement();
-        Task newTask = new Task(id,title,description,TaskStatus.NEW);
+        Task newTask = new Task(id,title,description,Status.NEW);
         taskMap.put(id,newTask);
         saveTasksToFile();
-        return newTask
+        return newTask;
     }
     public Task update(Task updateTask){
         if (taskMap.containsKey(updateTask.getId())){
@@ -44,7 +44,7 @@ public class TaskRepository {
             saveTasksToFile();
             return updateTask;
         }
-        return null
+        return null;
     }
     public boolean delete(int id){
         if (taskMap.containsKey(id)){
