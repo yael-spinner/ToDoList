@@ -1,19 +1,12 @@
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 
 
 public class TaskRepository {
-    private final String FILE_PATH = "task.json";
+    private final String FILE_PATH = "task.data";
     private Map<Integer,Task> taskMap;
-    private final Gson gson=new Gson();
     private AtomicInteger nextId;
 
     public TaskRepository(){
@@ -21,17 +14,19 @@ public class TaskRepository {
         nextId=new AtomicInteger(taskMap.keySet().stream().mapToInt(v-> v).max().orElse(0)+1);
     }
     private Map<Integer,Task> loadTaskFromFile(){
-        try (FileReader reader=new FileReader(FILE_PATH)){
-            Type type=new TypeToken<Map<Integer,Task>>(){}.getType();
-            Map<Integer,Task>loadedMap=gson.fromJson(reader,type);
-            return loadedMap !=null ?loadedMap:new HashMap<>();
-        }catch(IOException e){
+        try (ObjectInputStream ois=new ObjectInputStream(new FileInputStream(FILE_PATH))) {
+            Map<Integer, Task> loadMap = (Map<Integer, Task>) ois.readObject();
+            return loadMap != null ? loadMap : new HashMap<>();
+        }catch (FileNotFoundException e){
+            return new HashMap<>();
+        }catch(IOException | ClassNotFoundException e){
+            System.err.println("Error loading tasks: " + e.getMessage());
             return new HashMap<>();
         }
     }
     private void saveTasksToFile(){
-        try (FileWriter writer=new FileWriter(FILE_PATH)){
-            gson.toJson(taskMap,writer);
+        try (ObjectOutputStream oos =new ObjectOutputStream(new FileOutputStream(FILE_PATH))){
+            oos.writeObject(taskMap);
         }catch (IOException e){
             System.err.println("Error writing tasks to file: "+e.getMessage());
         }
