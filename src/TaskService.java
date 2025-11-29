@@ -51,4 +51,15 @@ public class TaskService {
         }));
         return allTasks;
     }
+    public Task updateTaskStatus(int id,  Status newStatus) {
+        Task task = taskRepository.getById(id);
+
+        if (task != null&&newStatus != null) {
+                task.setStatus(newStatus);
+            return taskRepository.update(task);
+        }
+        return null;
+    }
+
 }
+
