@@ -1,4 +1,6 @@
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 public class TaskService {
     private final TaskRepository taskRepository;
     public TaskService(TaskRepository taskRepository){
@@ -25,5 +27,20 @@ public class TaskService {
                 task.getDescription().toLowerCase().contains(lowerCaseSearchText)
         ).collect(Collectors.toList());
     }
-
+    public List<Task> getTasksSortedByStatus() {
+        List<Task> allTasks = taskRepository.litAll();
+        allTasks.sort(Comparator.comparing(task->{
+            switch (task.getStatus()){
+                case NEW:
+                    return 1;
+                case IN_PROGRESS:
+                    return 2;
+                case DONE:
+                    return 3;
+                default:
+                    return 4;
+            }
+        }));
+        return allTasks;
+    }
 }
