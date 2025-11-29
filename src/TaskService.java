@@ -19,6 +19,11 @@ public class TaskService {
         }
         return null;
     }
-
+    public List<Task> searchTasks(String searchText){
+        String lowerCaseSearchText=searchText.toLowerCase();
+        return taskRepository.listAll().stream().filter(task->task.getTitel().toLowerCase()contains(lowerCaseSearchText)||
+                task.getDescription().toLowerCase().contains(lowerCaseSearchText)
+        ).collect(Collectors.toList());
+    }
 
 }
